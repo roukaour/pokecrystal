@@ -79,6 +79,14 @@ MeetMomScript:
 .FinishPhone:
 	writetext UnknownText_0x7a850
 	waitbutton
+
+	; debug party and items for testing
+	givepoke FERALIGATR, 50 ; can use Surf and Dive
+	giveitem HM_SURF
+	giveitem HM_DIVE
+	setflag ENGINE_FOGBADGE ; allows Surf
+	setflag ENGINE_CASCADEBADGE ; allows Dive
+
 	closetext
 	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
 	iftrue .FromRight
@@ -387,8 +395,8 @@ PlayersHouse1F_MapEvents:
 	db 0, 0 ; filler
 
 	db 3 ; warp events
-	warp_event  6,  7, NEW_BARK_TOWN, 2
-	warp_event  7,  7, NEW_BARK_TOWN, 2
+	warp_event  6,  7, CIANWOOD_CITY, 3 ; debug warps for quick
+	warp_event  7,  7, CIANWOOD_CITY, 3 ; access to Route 41
 	warp_event  9,  0, PLAYERS_HOUSE_2F, 1
 
 	db 2 ; coord events

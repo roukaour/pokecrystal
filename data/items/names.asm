@@ -248,7 +248,7 @@ ItemNames::
 	db "HM05@"
 	db "HM06@"
 	db "HM07@"
-	db "TERU-SAMA@"
+	db "HM08@"
 	db "TERU-SAMA@"
 	db "TERU-SAMA@"
 	db "TERU-SAMA@"

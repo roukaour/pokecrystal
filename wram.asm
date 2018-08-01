@@ -489,7 +489,7 @@ wPlayerSubStatus4:: ; c66b
 ; 6 rage
 ; 5 recharge
 ; 4 substitute
-; 3
+; 3 underwater
 ; 2 focus energy
 ; 1 mist
 ; 0 x accuracy
@@ -2761,7 +2761,7 @@ wSafariTimeRemaining:: dw ; dc7a
 
 wPhoneList:: ds CONTACT_LIST_SIZE ; dc7c
 ; dc86
-	ds 23
+	ds 22
 
 wLuckyNumberShowFlag:: db ; dc9d
 	ds 1
@@ -2787,7 +2787,10 @@ wBackupWarpNumber:: db ; dcad
 wBackupMapGroup::   db ; dcae
 wBackupMapNumber::  db ; dcaf
 
-	ds 3
+wDiveMapGroup:: db
+wDiveMapNumber:: db
+wDiveDeltaX:: db
+wDiveDeltaY:: db
 
 wLastSpawnMapGroup:: db
 wLastSpawnMapNumber:: db

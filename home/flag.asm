@@ -11,6 +11,12 @@ ResetBikeFlags::
 	ld [hl], a
 	ret
 
+ResetDiveMap::
+	xor a
+	ld [wDiveMapGroup], a
+	ld [wDiveMapNumber], a
+	ret
+
 ResetFlashIfOutOfCave::
 	ld a, [wEnvironment]
 	cp ROUTE

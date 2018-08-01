@@ -157,3 +157,5 @@ MoveEffectsPointers:
 	dw BeatUp
 	dw Fly
 	dw DefenseCurl
+	dw Surf
+	dw Whirlpool

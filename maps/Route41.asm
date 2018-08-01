@@ -13,7 +13,12 @@
 Route41_MapScripts:
 	db 0 ; scene scripts
 
-	db 0 ; callbacks
+	db 1 ; callbacks
+	callback MAPCALLBACK_NEWMAP, .DiveMap
+
+.DiveMap:
+	divemap ROUTE_41_UNDERWATER
+	return
 
 TrainerSwimmerfKaylee:
 	trainer SWIMMERF, KAYLEE, EVENT_BEAT_SWIMMERF_KAYLEE, SwimmerfKayleeSeenText, SwimmerfKayleeBeatenText, 0, .Script

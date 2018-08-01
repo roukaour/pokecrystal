@@ -26,7 +26,8 @@ COLL_WHIRLPOOL         EQU $24
 COLL_BUOY              EQU $27
 COLL_CUT_28            EQU $28 ; garbage
 COLL_WATER             EQU $29
-COLL_ICE_2B            EQU $2b ; unused
+COLL_DIVE_DOWN         EQU $2a
+COLL_DIVE_UP           EQU $2b
 COLL_WHIRLPOOL_2C      EQU $2c ; unused
 COLL_WATERFALL_RIGHT   EQU $30 ; unused
 COLL_WATERFALL_LEFT    EQU $31 ; unused

@@ -78,8 +78,22 @@ CeruleanGymMistyScript:
 	waitsfx
 	setflag ENGINE_CASCADEBADGE
 .FightDone:
+	checkevent EVENT_GOT_HM08_DIVE
+	iftrue .GotDive
+	writetext MistyAnotherMementoText
+	buttonsound
+	verbosegiveitem HM_DIVE
+	iffalse .NoRoomForDive
+	setevent EVENT_GOT_HM08_DIVE
+	writetext MistyDiveSpeechText
+	waitbutton
+	closetext
+	end
+
+.GotDive:
 	writetext UnknownText_0x188782
 	waitbutton
+.NoRoomForDive:
 	closetext
 	end
 
@@ -268,6 +282,27 @@ UnknownText_0x18870c:
 UnknownText_0x188768:
 	text "<PLAYER> received"
 	line "CASCADEBADGE."
+	done
+
+MistyAnotherMementoText:
+	text "MISTY: Here's"
+	line "another memento."
+	cont "Take it!"
+	done
+
+MistyDiveSpeechText:
+	text "MISTY: It contains"
+	line "the move DIVE."
+
+	para "With the CASCADE-"
+	line "BADGE, you can"
+
+	para "use DIVE outside"
+	line "of battle to get"
+	cont "to the seafloor."
+
+	para "Use it on dark"
+	line "patches of water."
 	done
 
 UnknownText_0x188782:

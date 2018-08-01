@@ -278,6 +278,7 @@ ENDM
 	add_hm FLASH        ; f7
 	add_hm WHIRLPOOL    ; f8
 	add_hm WATERFALL    ; f9
+	add_hm DIVE
 NUM_HMS = const_value - HM01
 
 add_mt: MACRO

@@ -335,3 +335,12 @@ INCBIN "data/tilesets/omanyte_word_room_metatiles.bin"
 
 TilesetAerodactylWordRoomMeta:
 INCBIN "data/tilesets/aerodactyl_word_room_metatiles.bin"
+
+TilesetUnderwaterGFX:
+INCBIN "gfx/tilesets/underwater.2bpp.lz"
+
+TilesetUnderwaterMeta:
+INCBIN "data/tilesets/underwater_metatiles.bin"
+
+TilesetUnderwaterColl:
+INCLUDE "data/tilesets/underwater_collision.asm"

@@ -168,8 +168,6 @@ CheckPitTile::
 CheckIceTile::
 	cp COLL_ICE
 	ret z
-	cp COLL_ICE_2B
-	ret z
 	scf
 	ret
 
@@ -186,6 +184,12 @@ CheckWaterfallTile::
 	cp COLL_WATERFALL
 	ret z
 	cp COLL_CURRENT_DOWN
+	ret
+
+CheckDiveTile::
+	cp COLL_DIVE_UP
+	ret z
+	cp COLL_DIVE_DOWN
 	ret
 
 CheckStandingOnEntrance::

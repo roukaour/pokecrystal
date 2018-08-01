@@ -345,6 +345,35 @@ UnknownText_0x1c06bf::
 	line "WATERFALL?"
 	done
 
+_CantDiveText::
+	text "DIVE can't be"
+	line "used here."
+	prompt
+
+_CanDiveText::
+	text "The sea is deep."
+
+	para "A #MON can"
+	line "DIVE here."
+	done
+
+_AskDiveDownText::
+	text "The sea is deep."
+	line "Want to DIVE?"
+	done
+
+_AskDiveUpText::
+	text "Light is filter-"
+	line "ing from above."
+	cont "Want to DIVE?"
+	done
+
+_UsedDiveText::
+	text_from_ram wStringBuffer2
+	text " used"
+	line "DIVE!"
+	done
+
 UnknownText_0x1c06de::
 	text_from_ram wStringBuffer2
 	text " used"
@@ -715,6 +744,11 @@ UnknownText_0x1c0d5c::
 UnknownText_0x1c0d6c::
 	text_start
 	line "dug a hole!"
+	prompt
+
+HidUnderwaterText::
+	text_start
+	line "hid underwater!"
 	prompt
 
 _ActorNameText::

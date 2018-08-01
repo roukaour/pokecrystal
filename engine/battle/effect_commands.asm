@@ -348,14 +348,20 @@ CantMove:
 	ld a, BATTLE_VARS_MOVE_ANIM
 	call GetBattleVar
 	cp FLY
-	jr z, .fly_dig
+	jr z, .fly_dig_dive
 
 	cp DIG
+	jr z, .fly_dig_dive
+
+	cp DIVE
 	ret nz
 
-.fly_dig
+.fly_dig_dive
 	res SUBSTATUS_UNDERGROUND, [hl]
 	res SUBSTATUS_FLYING, [hl]
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVarAddr
+	res SUBSTATUS_UNDERWATER, [hl]
 	jp AppearUserRaiseSub
 
 OpponentCantMove:
@@ -510,12 +516,17 @@ CheckEnemyTurn:
 	xor a
 	ld [wNumHits], a
 
-	; Flicker the monster pic unless flying or underground.
+	; Flicker the monster pic unless flying, underground, or underwater.
 	ld de, ANIM_HIT_CONFUSION
 	ld a, BATTLE_VARS_SUBSTATUS3_OPP
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	jr nz, .no_flicker
+	ld a, BATTLE_VARS_SUBSTATUS4_OPP
+	call GetBattleVar
+	and 1 << SUBSTATUS_UNDERWATER
 	call z, PlayFXAnimID
+.no_flicker
 
 	ld c, TRUE
 	call DoEnemyDamage
@@ -613,12 +624,17 @@ HitConfusion:
 	xor a
 	ld [wNumHits], a
 
-	; Flicker the monster pic unless flying or underground.
+	; Flicker the monster pic unless flying, underground, or underwater.
 	ld de, ANIM_HIT_CONFUSION
 	ld a, BATTLE_VARS_SUBSTATUS3_OPP
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	jr nz, .no_flicker
+	ld a, BATTLE_VARS_SUBSTATUS4_OPP
+	call GetBattleVar
+	and 1 << SUBSTATUS_UNDERWATER
 	call z, PlayFXAnimID
+.no_flicker
 
 	ld hl, UpdatePlayerHUD
 	call CallBattleCore
@@ -1569,7 +1585,7 @@ BattleCommand_CheckHit:
 	call .LockOn
 	ret nz
 
-	call .FlyDigMoves
+	call .FlyDigDiveMoves
 	jp nz, .Miss
 
 	call .ThunderRain
@@ -1716,15 +1732,29 @@ BattleCommand_CheckHit:
 	and a
 	ret
 
-.FlyDigMoves:
-; Check for moves that can hit underground/flying opponents.
+.FlyDigDiveMoves:
+; Check for moves that can hit underground/flying/underwater opponents.
 ; Return z if the current move can hit the opponent.
 
 	ld a, BATTLE_VARS_SUBSTATUS3_OPP
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	jr nz, .flying_or_underground
+
+	ld a, BATTLE_VARS_SUBSTATUS4_OPP
+	call GetBattleVar
+	and 1 << SUBSTATUS_UNDERWATER
 	ret z
 
+	ld a, BATTLE_VARS_MOVE_ANIM
+	call GetBattleVar
+
+	cp SURF
+	ret z
+	cp WHIRLPOOL
+	ret
+
+.flying_or_underground
 	bit SUBSTATUS_FLYING, a
 	jr z, .DigMoves
 
@@ -2004,6 +2034,8 @@ BattleCommand_MoveAnimNoSub:
 	cp FLY
 	jr z, .clear_sprite
 	cp DIG
+	jr z, .clear_sprite
+	cp DIVE
 	ret nz
 .clear_sprite
 	jp AppearUserLowerSub
@@ -2098,9 +2130,11 @@ BattleCommand_FailureText:
 	call GetBattleVarAddr
 
 	cp FLY
-	jr z, .fly_dig
+	jr z, .fly_dig_dive
 	cp DIG
-	jr z, .fly_dig
+	jr z, .fly_dig_dive
+	cp DIVE
+	jr z, .fly_dig_dive
 
 ; Move effect:
 	inc hl
@@ -2118,11 +2152,14 @@ BattleCommand_FailureText:
 	call BattleCommand_RaiseSub
 	jp EndMoveEffect
 
-.fly_dig
+.fly_dig_dive
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVarAddr
 	res SUBSTATUS_UNDERGROUND, [hl]
 	res SUBSTATUS_FLYING, [hl]
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVarAddr
+	res SUBSTATUS_UNDERWATER, [hl]
 	call AppearUserRaiseSub
 	jp EndMoveEffect
 
@@ -3385,6 +3422,11 @@ FarPlayBattleAnimation:
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
 	ret nz
 
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVar
+	and 1 << SUBSTATUS_UNDERWATER
+	ret nz
+
 	; fallthrough
 
 PlayFXAnimID:
@@ -3553,7 +3595,12 @@ DoSubstituteDamage:
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	jr nz, .dont_lower_sub
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVar
+	and 1 << SUBSTATUS_UNDERWATER
 	call z, AppearUserLowerSub
+.dont_lower_sub
 	call BattleCommand_SwitchTurn
 
 	ld a, BATTLE_VARS_MOVE_EFFECT
@@ -5552,6 +5599,9 @@ BattleCommand_CheckCharge:
 	res SUBSTATUS_CHARGED, [hl]
 	res SUBSTATUS_UNDERGROUND, [hl]
 	res SUBSTATUS_FLYING, [hl]
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVarAddr
+	res SUBSTATUS_UNDERWATER, [hl]
 	ld b, charge_command
 	jp SkipToBattleCommand
 
@@ -5591,6 +5641,8 @@ BattleCommand_Charge:
 	jr z, .flying
 	cp DIG
 	jr z, .flying
+	cp DIVE
+	jr z, .flying
 	call BattleCommand_RaiseSub
 	jr .not_flying
 
@@ -5602,11 +5654,19 @@ BattleCommand_Charge:
 	ld a, BATTLE_VARS_MOVE_ANIM
 	call GetBattleVar
 	ld b, a
+	cp DIVE
+	jr z, .set_diving
 	cp FLY
 	jr z, .set_flying
 	cp DIG
 	jr nz, .dont_set_digging
 	set SUBSTATUS_UNDERGROUND, [hl]
+	jr .dont_set_digging
+
+.set_diving
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVarAddr
+	set SUBSTATUS_UNDERWATER, [hl]
 	jr .dont_set_digging
 
 .set_flying
@@ -5662,6 +5722,10 @@ BattleCommand_Charge:
 
 	cp DIG
 	ld hl, .Dig
+	jr z, .done
+
+	cp DIVE
+	ld hl, .Dive
 
 .done
 	ret
@@ -5694,6 +5758,11 @@ BattleCommand_Charge:
 .Dig:
 ; 'dug a hole!'
 	text_jump UnknownText_0x1c0d6c
+	db "@"
+
+.Dive:
+; 'hid underwater!'
+	text_jump HidUnderwaterText
 	db "@"
 
 BattleCommand3c:
@@ -6074,6 +6143,14 @@ BattleCommand_DoubleUndergroundDamage:
 	ld a, BATTLE_VARS_SUBSTATUS3_OPP
 	call GetBattleVar
 	bit SUBSTATUS_UNDERGROUND, a
+	ret z
+	jr DoubleDamage
+
+BattleCommand_DoubleUnderwaterDamage:
+; doubleunderwaterdamage
+	ld a, BATTLE_VARS_SUBSTATUS4_OPP
+	call GetBattleVar
+	bit SUBSTATUS_UNDERWATER, a
 	ret z
 
 	; fallthrough

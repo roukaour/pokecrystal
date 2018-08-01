@@ -5,6 +5,7 @@ HandleNewMap:
 	call ResetFlashIfOutOfCave
 	call GetCurrentMapSceneID
 	call ResetBikeFlags
+	call ResetDiveMap
 	ld a, MAPCALLBACK_NEWMAP
 	call RunMapCallback
 InitCommandQueue:

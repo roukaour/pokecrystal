@@ -1068,7 +1068,15 @@ ResidualDamage:
 	ld a, BATTLE_VARS_SUBSTATUS3_OPP
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	jr nz, .not_flying_or_underground
+	call Call_PlayBattleAnim_OnlyIfVisible
+	jr .called
+.not_flying_or_underground
+	ld a, BATTLE_VARS_SUBSTATUS4_OPP
+	call GetBattleVar
+	and 1 << SUBSTATUS_UNDERWATER
 	call z, Call_PlayBattleAnim_OnlyIfVisible
+.called
 	call SwitchTurnCore
 
 	call GetEighthMaxHP
@@ -1244,6 +1252,11 @@ HandleWrap:
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	jr nz, .skip_anim
+
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVar
+	and 1 << SUBSTATUS_UNDERWATER
 	jr nz, .skip_anim
 
 	call SwitchTurnCore
@@ -6939,6 +6952,11 @@ Call_PlayBattleAnim_OnlyIfVisible:
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	ret nz
+
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVar
+	and 1 << SUBSTATUS_UNDERWATER
 	ret nz
 
 Call_PlayBattleAnim:

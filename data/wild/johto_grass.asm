@@ -1649,4 +1649,31 @@ JohtoGrassWildMons:
 	db 44, GOLBAT
 	db 44, GOLBAT
 
+	map_id ROUTE_41_UNDERWATER
+	db 6 percent, 6 percent, 6 percent ; encounter rates: morn/day/nite
+	; morn
+	db 20, CHINCHOU
+	db 22, CHINCHOU
+	db 21, CORSOLA
+	db 23, CORSOLA
+	db 22, MANTINE
+	db 24, MANTINE
+	db 20, REMORAID
+	; day
+	db 20, CHINCHOU
+	db 22, CHINCHOU
+	db 21, CORSOLA
+	db 23, CORSOLA
+	db 22, MANTINE
+	db 24, MANTINE
+	db 20, REMORAID
+	; nite
+	db 20, CHINCHOU
+	db 22, CHINCHOU
+	db 21, STARYU
+	db 23, STARYU
+	db 22, MANTINE
+	db 24, MANTINE
+	db 20, REMORAID
+
 	db -1 ; end

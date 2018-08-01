@@ -568,6 +568,9 @@ FlyFunction:
 	ld de, ENGINE_STORMBADGE
 	call CheckBadge
 	jr c, .nostormbadge
+	ld a, [wMapTileset]
+	cp TILESET_UNDERWATER
+	jr z, .indoors
 	call GetMapEnvironment
 	call CheckOutdoorMap
 	jr z, .outdoors
@@ -1473,6 +1476,8 @@ FishFunction:
 	jr z, .fail
 	cp PLAYER_SURF_PIKA
 	jr z, .fail
+	cp PLAYER_DIVE
+	jr z, .fail
 	call GetFacingTileCoord
 	call GetTileCollision
 	cp WATERTILE
@@ -1840,4 +1845,143 @@ CantCutScript:
 
 UnknownText_0xd1d0:
 	text_jump UnknownText_0x1c0a05
+	db "@"
+
+DiveFunction:
+	call FieldMoveJumptableReset
+.loop
+	ld hl, .Jumptable
+	call FieldMoveJumptable
+	jr nc, .loop
+	and $7f
+	ld [wFieldMoveSucceeded], a
+	ret
+
+.Jumptable:
+ 	dw .TryDive
+ 	dw .DoDive
+ 	dw .FailDive
+
+.TryDive:
+	ld de, ENGINE_CASCADEBADGE
+	call CheckBadge
+	jr c, .nocascadebadge
+	call CheckMapCanDive
+	jr nz, .cannotdive
+	ld a, $1
+	ret
+.nocascadebadge
+	ld a, $80
+	ret
+.cannotdive
+	ld a, $2
+	ret
+
+.DoDive:
+	call GetPartyNick
+	ld hl, DiveFromMenuScript
+	call QueueScript
+	ld a, $81
+	ret
+
+.FailDive:
+	ld hl, CantDiveText
+	call MenuTextBoxBackup
+	ld a, $80
+	ret
+
+CantDiveText:
+	text_jump _CantDiveText
+	db "@"
+
+CheckMapCanDive:
+	ld a, [wDiveMapGroup]
+	and a
+	jr z, .failed
+	ld a, [wDiveMapNumber]
+	and a
+	jr z, .failed
+	ld a, [wPlayerStandingTile]
+	call CheckDiveTile
+	jr nz, .failed
+	xor a
+	ret
+
+.failed
+	scf
+	ret
+
+TryDiveOW::
+	call CheckMapCanDive
+	jr c, .failed
+
+	ld de, ENGINE_CASCADEBADGE
+	call CheckEngineFlag
+	jr c, .cant
+
+	ld d, DIVE
+	call CheckPartyMove
+	jr c, .cant
+
+	call GetPartyNick
+	ld a, BANK(AskDiveScript)
+	ld hl, AskDiveScript
+	call CallScript
+	scf
+	ret
+
+.failed
+	xor a
+	ret
+
+.cant
+	ld a, BANK(CantDiveScript)
+	ld hl, CantDiveScript
+	call CallScript
+	scf
+	ret
+
+CantDiveScript:
+	jumptext CanDiveText
+
+CanDiveText:
+	text_jump _CanDiveText
+	db "@"
+
+AskDiveScript:
+	opentext
+	copybytetovar wPlayerStandingTile
+	ifequal COLL_DIVE_UP, .up
+	writetext AskDiveDownText
+	jump .continue
+.up
+	writetext AskDiveUpText
+.continue
+	yesorno
+	iftrue UsedDiveScript
+	closetext
+	end
+
+AskDiveDownText:
+	text_jump _AskDiveDownText
+	db "@"
+
+AskDiveUpText:
+	text_jump _AskDiveUpText
+	db "@"
+
+DiveFromMenuScript:
+	special UpdateTimePals
+
+UsedDiveScript:
+	writetext UsedDiveText
+	waitbutton
+	closetext
+	special FadeOutPalettes
+	waitsfx
+	divewarp
+	end
+
+UsedDiveText:
+	text_jump _UsedDiveText
 	db "@"

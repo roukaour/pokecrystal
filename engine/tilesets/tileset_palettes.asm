@@ -6,6 +6,8 @@ LoadSpecialMapPalette:
 	jr z, .battle_tower
 	cp TILESET_ICE_PATH
 	jr z, .ice_path
+	cp TILESET_UNDERWATER
+	jr z, .underwater
 	cp TILESET_HOUSE
 	jr z, .house
 	cp TILESET_RADIO_TOWER
@@ -30,6 +32,11 @@ LoadSpecialMapPalette:
 	cp INDOOR ; Hall of Fame
 	jr z, .do_nothing
 	call LoadIcePathPalette
+	scf
+	ret
+
+.underwater
+	call LoadUnderwaterPalette
 	scf
 	ret
 
@@ -85,6 +92,17 @@ LoadIcePathPalette:
 IcePathPalette:
 INCLUDE "gfx/tilesets/ice_path.pal"
 
+LoadUnderwaterPalette:
+	ld a, BANK(wBGPals1)
+	ld de, wBGPals1
+	ld hl, UnderwaterPalette
+	ld bc, 8 palettes
+	call FarCopyWRAM
+	ret
+
+UnderwaterPalette:
+INCLUDE "gfx/tilesets/underwater.pal"
+
 LoadHousePalette:
 	ld a, BANK(wBGPals1)
 	ld de, wBGPals1
@@ -135,3 +153,29 @@ LoadMansionPalette:
 
 MansionPalette2:
 INCLUDE "gfx/tilesets/mansion_2.pal"
+
+LoadSpecialMapObjectPalette:
+	ld a, [wMapTileset]
+	cp TILESET_UNDERWATER
+	jr z, .underwater
+	jr .do_nothing
+
+.underwater
+	call LoadUnderwaterObjectPalette
+	scf
+	ret
+
+.do_nothing
+	and a
+	ret
+
+LoadUnderwaterObjectPalette:
+	ld a, BANK(wOBPals1)
+	ld de, wOBPals1
+	ld hl, UnderwaterObjectPalette
+	ld bc, 8 palettes
+	call FarCopyWRAM
+	ret
+
+UnderwaterObjectPalette:
+INCLUDE "gfx/tilesets/underwater_sprites.pal"
