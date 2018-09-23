@@ -2377,13 +2377,12 @@ Function56cd:
 	jr nc, .ok8
 	ld c, a
 	push bc
-	call Coord2Tile
+	call Coord2Attr
 	pop bc
-; NPCs disappear if standing on tile $60-$7f (or $e0-$ff),
-; since those IDs are for text characters and textbox frames.
 	ld a, [hl]
-	cp FIRST_REGULAR_TEXT_CHAR
-	jr nc, .nope
+	and PALETTE_MASK
+	cp PAL_BG_TEXT
+	jr z, .nope
 .ok8
 	dec d
 	jr nz, .next

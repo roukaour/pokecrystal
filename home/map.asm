@@ -1339,7 +1339,7 @@ LoadTilesetGFX::
 
 	ld hl, wDecompressScratch
 	ld de, vTiles2
-	ld bc, $60 tiles
+	ld bc, $7f tiles
 	call CopyBytes
 
 	ldh a, [rVBK]
@@ -1347,9 +1347,9 @@ LoadTilesetGFX::
 	ld a, $1
 	ldh [rVBK], a
 
-	ld hl, wDecompressScratch + $60 tiles
+	ld hl, wDecompressScratch + $80 tiles
 	ld de, vTiles2
-	ld bc, $60 tiles
+	ld bc, $80 tiles
 	call CopyBytes
 
 	pop af
