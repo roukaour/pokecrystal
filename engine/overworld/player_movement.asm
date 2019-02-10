@@ -55,6 +55,8 @@ DoPlayerMovement::
 	ret c
 	call .TryJump
 	ret c
+	call .TryDiagonalStairs
+	ret c
 	call .CheckWarp
 	ret c
 	jr .NotMoving
@@ -80,6 +82,8 @@ DoPlayerMovement::
 	call .TryStep
 	ret c
 	call .TryJump
+	ret c
+	call .TryDiagonalStairs
 	ret c
 	call .CheckWarp
 	ret c
@@ -392,6 +396,37 @@ DoPlayerMovement::
 	db FACE_UP | FACE_RIGHT   ; COLL_HOP_UP_RIGHT
 	db FACE_UP | FACE_LEFT    ; COLL_HOP_UP_LEFT
 
+.TryDiagonalStairs:
+	ld a, [wPlayerStandingTile]
+	ld e, a
+	and $f0
+	cp HI_NYBBLE_DIAGONAL_STAIRS
+	jr nz, .DontDiagonalStairs
+
+	ld a, e
+	and 7
+	ld e, a
+	ld d, 0
+	ld hl, .FacingStairsTable
+	add hl, de
+	ld a, [wFacingDirection]
+	and [hl]
+	jr z, .DontDiagonalStairs
+
+	ld a, STEP_DIAGONAL_STAIRS
+	call .DoStep
+	ld a, 7
+	scf
+	ret
+
+.FacingStairsTable:
+	db FACE_RIGHT
+	db FACE_LEFT
+
+.DontDiagonalStairs:
+	xor a
+	ret
+
 .CheckWarp:
 ; Bug: Since no case is made for STANDING here, it will check
 ; [.edgewarps + $ff]. This resolves to $3e at $8035a.
@@ -478,6 +513,7 @@ DoPlayerMovement::
 	dw .TurningStep
 	dw .BackJumpStep
 	dw .FinishFacing
+	dw .DiagonalStairsStep
 
 .SlowStep:
 	slow_step DOWN
@@ -519,6 +555,11 @@ DoPlayerMovement::
 	db $80 | UP
 	db $80 | LEFT
 	db $80 | RIGHT
+.DiagonalStairsStep:
+	stairs_step DOWN
+	stairs_step UP
+	stairs_step LEFT
+	stairs_step RIGHT
 
 .StandInPlace:
 	ld a, 0

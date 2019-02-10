@@ -97,6 +97,10 @@ MeetMomScript:
 .Finish:
 	special RestartMapMusic
 	turnobject PLAYERSHOUSE1F_MOM1, LEFT
+	opentext
+	givepoke SUICUNE, 50
+	closetext
+	warp ROUTE_45, 17, 61
 	end
 
 MeetMomTalkedScript:

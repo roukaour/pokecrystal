@@ -73,6 +73,11 @@ fast_jump_step: MACRO
 	db movement_fast_jump_step | \1
 ENDM
 
+	enum movement_stairs_step
+stairs_step: MACRO
+	db movement_stairs_step | \1
+ENDM
+
 __enumdir__ = +1
 
 ; Control
