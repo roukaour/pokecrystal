@@ -92,6 +92,7 @@ RETVAR_EXECUTE EQU (2 << 6)
 	const PLAYEREVENT_JOYCHANGEFACING
 	const PLAYEREVENT_DEEP_SAND
 	const PLAYEREVENT_THIN_ICE
+	const PLAYEREVENT_DEEP_GRASS
 NUM_PLAYER_EVENTS EQU const_value
 
 ; script data sizes (see macros/scripts/maps.asm)

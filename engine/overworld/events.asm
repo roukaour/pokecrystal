@@ -327,15 +327,17 @@ CheckTileEvent:
 .coord_events_disabled
 	ld hl, wPlayerStepFlags
 	bit PLAYERSTEP_STOP_F, [hl]
-	jr z, .no_deep_sand_or_thin_ice
+	jr z, .no_tile_effects
 
 	ld a, [wPlayerStandingTile]
 	call CheckDeepSandTile
 	jr z, .deep_sand
 	call CheckThinIceTile
 	jr z, .thin_ice
+	call CheckDeepGrassTile
+	jr z, .deep_grass
 
-.no_deep_sand_or_thin_ice
+.no_tile_effects
 	call CheckStepCountScriptFlag
 	jr z, .step_count_disabled
 
@@ -379,6 +381,11 @@ CheckTileEvent:
 
 .thin_ice
 	ld a, PLAYEREVENT_THIN_ICE
+	scf
+	ret
+
+.deep_grass
+	ld a, PLAYEREVENT_DEEP_GRASS
 	scf
 	ret
 
@@ -1008,6 +1015,7 @@ PlayerEventScriptPointers:
 	dba ChangeDirectionScript    ; PLAYEREVENT_JOYCHANGEFACING
 	dba DeepSandScript           ; PLAYEREVENT_DEEP_SAND
 	dba ThinIceScript            ; PLAYEREVENT_THIN_ICE
+	dba DeepGrassScript          ; PLAYEREVENT_DEEP_GRASS
 	dba Invalid_0x96c2d          ; (NUM_PLAYER_EVENTS)
 
 Invalid_0x96c2d:
@@ -1054,22 +1062,9 @@ DeepSandScript:
 	end
 
 .DeepSand:
-	; hl = {wBGMapAnchor} + BG_MAP_WIDTH * 8 + 8 (player's top-left tile)
-	ld hl, wBGMapAnchor + 1
-	ld a, [hld] ; a = HIGH({wBGMapAnchor})
-	inc a ; move down 8 rows
-	and HIGH(vBGMap0 + BG_MAP_WIDTH * BG_MAP_HEIGHT - 1) ; wrap vertically
-	ld l, [hl]
-	ld h, a
-	ld a, l
-	add a, 8 ; move right 8 rows
-	; restore "row" bits (upper 3)
-	xor l
-	and BG_MAP_WIDTH - 1
-	xor l
-	ld l, a
+	call GetBGMapPlayerOffset
 
-	; assume tiles are standard sand: $06, GRAY, bank 0
+	; assume tiles are standard sand: tile $06, GRAY, bank 0
 	; write footprints $30 and $35 with same palette and bank
 	call DisableLCD
 	ld bc, BG_MAP_WIDTH + 1
@@ -1078,8 +1073,25 @@ DeepSandScript:
 	ld [hl], $35
 	call EnableLCD
 
-	call UpdateSprites
-	ret
+	jp UpdateSprites
+
+DeepGrassScript:
+	callasm .DeepGrass
+	end
+
+.DeepGrass:
+	call GetBGMapPlayerOffset
+
+	; assume tiles are standard grass: tile $05, GREEN, bank 0
+	; write footprints $5c and $5d with same palette and bank
+	call DisableLCD
+	ld bc, BG_MAP_WIDTH + 1
+	ld [hl], $5c
+	add hl, bc
+	ld [hl], $5d
+	call EnableLCD
+
+	jp UpdateSprites
 
 ThinIceScript:
 	callasm .ThinIce
@@ -1099,26 +1111,29 @@ ThinIceScript:
 ;	ld a, $01 ; hard-code block $01
 ;	ld [hl], a
 
-;	; hl = {wBGMapAnchor} + BG_MAP_WIDTH * 8 + 8 (player's top-left tile)
-;	ld hl, wBGMapAnchor + 1
-;	ld a, [hld] ; a = HIGH({wBGMapAnchor})
-;	inc a ; move down 8 rows
-;	and HIGH(vBGMap0 + BG_MAP_WIDTH * BG_MAP_HEIGHT - 1) ; wrap vertically
-;	ld l, [hl]
-;	ld h, a
-;	ld a, l
-;	add a, 8 ; move right 8 rows
-;	; restore "row" bits (upper 3)
-;	xor l
-;	and BG_MAP_WIDTH - 1
-;	xor l
-;	ld l, a
+;	call GetBGMapPlayerOffset
 
 ;	call DisableLCD
 ;	; TODO: update tiles
 ;	call EnableLCD
 
-;	call UpdateSprites
+	jp UpdateSprites
+
+GetBGMapPlayerOffset:
+; hl = {wBGMapAnchor} + BG_MAP_WIDTH * 8 + 8 (player's top-left tile)
+	ld hl, wBGMapAnchor + 1
+	ld a, [hld] ; a = HIGH({wBGMapAnchor})
+	inc a ; move down 8 rows
+	and HIGH(vBGMap0 + BG_MAP_WIDTH * BG_MAP_HEIGHT - 1) ; wrap vertically
+	ld l, [hl]
+	ld h, a
+	ld a, l
+	add a, 8 ; move right 8 rows
+	; restore "row" bits (upper 3)
+	xor l
+	and BG_MAP_WIDTH - 1
+	xor l
+	ld l, a
 	ret
 
 INCLUDE "engine/overworld/scripting.asm"
