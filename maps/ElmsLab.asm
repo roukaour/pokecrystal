@@ -473,7 +473,7 @@ AideScript_GivePotion:
 	opentext
 	writetext AideText_GiveYouPotion
 	buttonsound
-	verbosegiveitem POTION
+	verbosegiveitem BICYCLE
 	writetext AideText_AlwaysBusy
 	waitbutton
 	closetext
