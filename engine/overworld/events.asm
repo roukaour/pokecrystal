@@ -325,6 +325,17 @@ CheckTileEvent:
 	jr c, .coord_event
 
 .coord_events_disabled
+	ld hl, wPlayerStepFlags
+	bit PLAYERSTEP_STOP_F, [hl]
+	jr z, .no_deep_sand_or_thin_ice
+
+	ld a, [wPlayerStandingTile]
+	call CheckDeepSandTile
+	jr z, .deep_sand
+	call CheckThinIceTile
+	jr z, .thin_ice
+
+.no_deep_sand_or_thin_ice
 	call CheckStepCountScriptFlag
 	jr z, .step_count_disabled
 
@@ -358,6 +369,16 @@ CheckTileEvent:
 
 .not_pit
 	ld a, PLAYEREVENT_WARP
+	scf
+	ret
+
+.deep_sand
+	ld a, PLAYEREVENT_DEEP_SAND
+	scf
+	ret
+
+.thin_ice
+	ld a, PLAYEREVENT_THIN_ICE
 	scf
 	ret
 
@@ -985,6 +1006,8 @@ PlayerEventScriptPointers:
 	dba Script_OverworldWhiteout ; PLAYEREVENT_WHITEOUT
 	dba HatchEggScript           ; PLAYEREVENT_HATCH
 	dba ChangeDirectionScript    ; PLAYEREVENT_JOYCHANGEFACING
+	dba DeepSandScript           ; PLAYEREVENT_DEEP_SAND
+	dba ThinIceScript            ; PLAYEREVENT_THIN_ICE
 	dba Invalid_0x96c2d          ; (NUM_PLAYER_EVENTS)
 
 Invalid_0x96c2d:
@@ -1025,6 +1048,78 @@ ChangeDirectionScript: ; 9
 	deactivatefacing 3
 	callasm EnableWildEncounters
 	end
+
+DeepSandScript:
+	callasm .DeepSand
+	end
+
+.DeepSand:
+	; hl = {wBGMapAnchor} + BG_MAP_WIDTH * 8 + 8 (player's top-left tile)
+	ld hl, wBGMapAnchor + 1
+	ld a, [hld] ; a = HIGH({wBGMapAnchor})
+	inc a ; move down 8 rows
+	and HIGH(vBGMap0 + BG_MAP_WIDTH * BG_MAP_HEIGHT - 1) ; wrap vertically
+	ld l, [hl]
+	ld h, a
+	ld a, l
+	add a, 8 ; move right 8 rows
+	; restore "row" bits (upper 3)
+	xor l
+	and BG_MAP_WIDTH - 1
+	xor l
+	ld l, a
+
+	; assume tiles are standard sand: $06, GRAY, bank 0
+	; write footprints $30 and $35 with same palette and bank
+	call DisableLCD
+	ld bc, BG_MAP_WIDTH + 1
+	ld [hl], $30
+	add hl, bc
+	ld [hl], $35
+	call EnableLCD
+
+	call UpdateSprites
+	ret
+
+ThinIceScript:
+	callasm .ThinIce
+	end
+
+.ThinIce:
+;	; changeblock
+;	ld a, [wXCoord]
+;	and %11111110
+;	add 4
+;	ld d, a
+;	ld a, [wYCoord]
+;	and %11111110
+;	add 4
+;	ld e, a
+;	call GetBlockLocation
+;	ld a, $01 ; hard-code block $01
+;	ld [hl], a
+
+;	; hl = {wBGMapAnchor} + BG_MAP_WIDTH * 8 + 8 (player's top-left tile)
+;	ld hl, wBGMapAnchor + 1
+;	ld a, [hld] ; a = HIGH({wBGMapAnchor})
+;	inc a ; move down 8 rows
+;	and HIGH(vBGMap0 + BG_MAP_WIDTH * BG_MAP_HEIGHT - 1) ; wrap vertically
+;	ld l, [hl]
+;	ld h, a
+;	ld a, l
+;	add a, 8 ; move right 8 rows
+;	; restore "row" bits (upper 3)
+;	xor l
+;	and BG_MAP_WIDTH - 1
+;	xor l
+;	ld l, a
+
+;	call DisableLCD
+;	; TODO: update tiles
+;	call EnableLCD
+
+;	call UpdateSprites
+	ret
 
 INCLUDE "engine/overworld/scripting.asm"
 

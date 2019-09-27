@@ -173,6 +173,14 @@ CheckIceTile::
 	scf
 	ret
 
+CheckDeepSandTile::
+	cp COLL_DEEP_SAND
+	ret
+
+CheckThinIceTile::
+	cp COLL_THIN_ICE
+	ret
+
 CheckWhirlpoolTile::
 	nop
 	cp COLL_WHIRLPOOL

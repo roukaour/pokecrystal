@@ -8,8 +8,10 @@ TALK                 EQU $10
 ; TileCollisionTable indexes (see data/collision_permissions.asm)
 COLL_FLOOR             EQU $00
 COLL_01                EQU $01 ; garbage
+COLL_DEEP_SAND         EQU $02
 COLL_03                EQU $03 ; garbage
 COLL_04                EQU $04 ; garbage
+COLL_THIN_ICE          EQU $05
 COLL_WALL              EQU $07
 COLL_CUT_08            EQU $08 ; unused
 COLL_TALL_GRASS_10     EQU $10 ; unused
