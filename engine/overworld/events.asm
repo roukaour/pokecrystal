@@ -359,19 +359,25 @@ CheckTileEvent:
 	ret
 
 .deep_sand
-	ld a, PLAYEREVENT_DEEP_SAND
-	scf
-	ret
+	call DeepSandScript.DeepSand
+	jr .no_tile_effects
+;	ld a, PLAYEREVENT_DEEP_SAND
+;	scf
+;	ret
 
 .thin_ice
-	ld a, PLAYEREVENT_THIN_ICE
-	scf
-	ret
+	call ThinIceScript.ThinIce
+	jr .no_tile_effects
+;	ld a, PLAYEREVENT_THIN_ICE
+;	scf
+;	ret
 
 .deep_grass
-	ld a, PLAYEREVENT_DEEP_GRASS
-	scf
-	ret
+	call DeepGrassScript.DeepGrass
+	jr .no_tile_effects
+;	ld a, PLAYEREVENT_DEEP_GRASS
+;	scf
+;	ret
 
 .coord_event
 	ld hl, wCurCoordEventScriptAddr
