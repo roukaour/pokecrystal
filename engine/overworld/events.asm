@@ -1028,11 +1028,27 @@ DeepSandScript:
 	cp PLAYER_BIKE
 	jr z, .bicycle
 ; walking
-	ld a, $30
-	call QueueVolatileTiles
-	ld bc, BG_MAP_WIDTH + 1
+	ld a, [wPlayerDirection]
+	and %1100
+	cp 8
+	jr c, .vertical
+; horizontal
+	ld bc, BG_MAP_WIDTH
 	add hl, bc
-	ld a, $35
+	ld a, $5a
+	call QueueVolatileTiles
+	inc hl
+	ld a, $5b
+	call QueueVolatileTiles
+	jp FinishVolatileTiles
+
+.vertical
+	inc hl
+	ld a, $49
+	call QueueVolatileTiles
+	ld bc, BG_MAP_WIDTH - 1
+	add hl, bc
+	ld a, $58
 	call QueueVolatileTiles
 	jp FinishVolatileTiles
 
@@ -1040,7 +1056,7 @@ DeepSandScript:
 	ld a, [wPlayerDirection]
 	and %1100
 	cp 8
-	jr c, .vertical
+	jr c, .vertical_bicycle
 ; horizontal
 	ld bc, BG_MAP_WIDTH
 	add hl, bc
@@ -1051,7 +1067,7 @@ DeepSandScript:
 	call QueueVolatileTiles
 	jp FinishVolatileTiles
 
-.vertical
+.vertical_bicycle
 	ld a, $47
 	call QueueVolatileTiles
 	ld bc, BG_MAP_WIDTH
@@ -1073,11 +1089,27 @@ DeepGrassScript:
 	cp PLAYER_BIKE
 	jr z, .bicycle
 ; walking
+	ld a, [wPlayerDirection]
+	and %1100
+	cp 8
+	jr c, .vertical
+; horizontal
+	ld bc, BG_MAP_WIDTH
+	add hl, bc
 	ld a, $5c
 	call QueueVolatileTiles
-	ld bc, BG_MAP_WIDTH + 1
-	add hl, bc
+	inc hl
 	ld a, $5d
+	call QueueVolatileTiles
+	jp FinishVolatileTiles
+
+.vertical
+	inc hl
+	ld a, $4a
+	call QueueVolatileTiles
+	ld bc, BG_MAP_WIDTH - 1
+	add hl, bc
+	ld a, $59
 	call QueueVolatileTiles
 	jp FinishVolatileTiles
 
@@ -1096,7 +1128,7 @@ DeepGrassScript:
 	call QueueVolatileTiles
 	jp FinishVolatileTiles
 
-.vertical
+.vertical_bicycle
 	ld a, $57
 	call QueueVolatileTiles
 	ld bc, BG_MAP_WIDTH
