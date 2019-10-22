@@ -1028,13 +1028,13 @@ DeepSandScript:
 	cp PLAYER_BIKE
 	jr z, .bicycle
 ; walking
-	call DisableLCD
+	ld a, $30
+	call QueueVolatileTiles
 	ld bc, BG_MAP_WIDTH + 1
-	ld [hl], $30
 	add hl, bc
-	ld [hl], $35
-	call EnableLCD
-	jr .done
+	ld a, $35
+	call QueueVolatileTiles
+	jp FinishVolatileTiles
 
 .bicycle
 	ld a, [wPlayerDirection]
@@ -1042,25 +1042,23 @@ DeepSandScript:
 	cp 8
 	jr c, .vertical
 ; horizontal
-	call DisableLCD
 	ld bc, BG_MAP_WIDTH
 	add hl, bc
-	ld [hl], $46
+	ld a, $46
+	call QueueVolatileTiles
 	inc hl
-	ld [hl], $46
-	call EnableLCD
-	jr .done
+	ld a, $46
+	call QueueVolatileTiles
+	jp FinishVolatileTiles
 
 .vertical
-	call DisableLCD
+	ld a, $47
+	call QueueVolatileTiles
 	ld bc, BG_MAP_WIDTH
-	ld [hl], $47
 	add hl, bc
-	ld [hl], $47
-	call EnableLCD
-
-.done
-	jp UpdateSprites
+	ld a, $47
+	call QueueVolatileTiles
+	jp FinishVolatileTiles
 
 DeepGrassScript:
 	callasm .DeepGrass
@@ -1075,13 +1073,13 @@ DeepGrassScript:
 	cp PLAYER_BIKE
 	jr z, .bicycle
 ; walking
-	call DisableLCD
+	ld a, $5c
+	call QueueVolatileTiles
 	ld bc, BG_MAP_WIDTH + 1
-	ld [hl], $5c
 	add hl, bc
-	ld [hl], $5d
-	call EnableLCD
-	jr .done
+	ld a, $5d
+	call QueueVolatileTiles
+	jp FinishVolatileTiles
 
 .bicycle
 	ld a, [wPlayerDirection]
@@ -1089,25 +1087,23 @@ DeepGrassScript:
 	cp 8
 	jr c, .vertical
 ; horizontal
-	call DisableLCD
 	ld bc, BG_MAP_WIDTH
 	add hl, bc
-	ld [hl], $56
+	ld a, $56
+	call QueueVolatileTiles
 	inc hl
-	ld [hl], $56
-	call EnableLCD
-	jr .done
+	ld a, $56
+	call QueueVolatileTiles
+	jp FinishVolatileTiles
 
 .vertical
-	call DisableLCD
+	ld a, $57
+	call QueueVolatileTiles
 	ld bc, BG_MAP_WIDTH
-	ld [hl], $57
 	add hl, bc
-	ld [hl], $57
-	call EnableLCD
-
-.done
-	jp UpdateSprites
+	ld a, $57
+	call QueueVolatileTiles
+	jp FinishVolatileTiles
 
 ThinIceScript:
 	callasm .ThinIce
@@ -1134,23 +1130,6 @@ ThinIceScript:
 ;	call EnableLCD
 
 	jp UpdateSprites
-
-GetBGMapPlayerOffset:
-; hl = {wBGMapAnchor} + BG_MAP_WIDTH * 8 + 8 (player's top-left tile)
-	ld hl, wBGMapAnchor + 1
-	ld a, [hld] ; a = HIGH({wBGMapAnchor})
-	inc a ; move down 8 rows
-	and HIGH(vBGMap0 + BG_MAP_WIDTH * BG_MAP_HEIGHT - 1) ; wrap vertically
-	ld l, [hl]
-	ld h, a
-	ld a, l
-	add a, 8 ; move right 8 rows
-	; restore "row" bits (upper 3)
-	xor l
-	and BG_MAP_WIDTH - 1
-	xor l
-	ld l, a
-	ret
 
 INCLUDE "engine/overworld/scripting.asm"
 
