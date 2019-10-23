@@ -177,14 +177,6 @@ CheckDeepSandTile::
 	cp COLL_DEEP_SAND
 	ret
 
-CheckThinIceTile::
-	cp COLL_THIN_ICE
-	ret
-
-CheckDeepGrassTile::
-	cp COLL_DEEP_GRASS
-	ret
-
 CheckWhirlpoolTile::
 	nop
 	cp COLL_WHIRLPOOL

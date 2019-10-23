@@ -317,11 +317,9 @@ CheckTileEvent:
 
 	ld a, [wPlayerStandingTile]
 	call CheckDeepSandTile
-	jr z, .deep_sand
-	call CheckThinIceTile
-	jr z, .thin_ice
-	call CheckDeepGrassTile
-	jr z, .deep_grass
+	jr nz, .no_tile_effects
+
+	call RenderDeepSand
 
 .no_tile_effects
 	call CheckStepCountScriptFlag
@@ -357,27 +355,6 @@ CheckTileEvent:
 	ld a, PLAYEREVENT_WARP
 	scf
 	ret
-
-.deep_sand
-	call DeepSandScript.DeepSand
-	jr .no_tile_effects
-;	ld a, PLAYEREVENT_DEEP_SAND
-;	scf
-;	ret
-
-.thin_ice
-	call ThinIceScript.ThinIce
-	jr .no_tile_effects
-;	ld a, PLAYEREVENT_THIN_ICE
-;	scf
-;	ret
-
-.deep_grass
-	call DeepGrassScript.DeepGrass
-	jr .no_tile_effects
-;	ld a, PLAYEREVENT_DEEP_GRASS
-;	scf
-;	ret
 
 .coord_event
 	ld hl, wCurCoordEventScriptAddr
@@ -980,9 +957,6 @@ PlayerEventScriptPointers:
 	dba Script_OverworldWhiteout ; PLAYEREVENT_WHITEOUT
 	dba HatchEggScript           ; PLAYEREVENT_HATCH
 	dba ChangeDirectionScript    ; PLAYEREVENT_JOYCHANGEFACING
-	dba DeepSandScript           ; PLAYEREVENT_DEEP_SAND
-	dba ThinIceScript            ; PLAYEREVENT_THIN_ICE
-	dba DeepGrassScript          ; PLAYEREVENT_DEEP_GRASS
 	dba Invalid_0x96c2d          ; (NUM_PLAYER_EVENTS)
 
 Invalid_0x96c2d:
@@ -1021,11 +995,7 @@ ChangeDirectionScript: ; 9
 	callasm EnableWildEncounters
 	end
 
-DeepSandScript:
-	callasm .DeepSand
-	end
-
-.DeepSand:
+RenderDeepSand:
 	call GetBGMapPlayerOffset
 
 	; assume tiles are standard sand: tile $06, GRAY, bank 0;
@@ -1081,93 +1051,6 @@ DeepSandScript:
 	ld a, $47
 	call QueueVolatileTiles
 	jp FinishVolatileTiles
-
-DeepGrassScript:
-	callasm .DeepGrass
-	end
-
-.DeepGrass:
-	call GetBGMapPlayerOffset
-
-	; assume tiles are standard grass: tile $05, GREEN, bank 0;
-	; write footprints with same palette and bank
-	ld a, [wPlayerState]
-	cp PLAYER_BIKE
-	jr z, .bicycle
-; walking
-	ld a, [wPlayerDirection]
-	and %1100
-	cp 8
-	jr c, .vertical
-; horizontal
-	ld bc, BG_MAP_WIDTH
-	add hl, bc
-	ld a, $5c
-	call QueueVolatileTiles
-	inc hl
-	ld a, $5d
-	call QueueVolatileTiles
-	jp FinishVolatileTiles
-
-.vertical
-	inc hl
-	ld a, $4a
-	call QueueVolatileTiles
-	ld bc, BG_MAP_WIDTH - 1
-	add hl, bc
-	ld a, $59
-	call QueueVolatileTiles
-	jp FinishVolatileTiles
-
-.bicycle
-	ld a, [wPlayerDirection]
-	and %1100
-	cp 8
-	jr c, .vertical
-; horizontal
-	ld bc, BG_MAP_WIDTH
-	add hl, bc
-	ld a, $56
-	call QueueVolatileTiles
-	inc hl
-	ld a, $56
-	call QueueVolatileTiles
-	jp FinishVolatileTiles
-
-.vertical_bicycle
-	ld a, $57
-	call QueueVolatileTiles
-	ld bc, BG_MAP_WIDTH
-	add hl, bc
-	ld a, $57
-	call QueueVolatileTiles
-	jp FinishVolatileTiles
-
-ThinIceScript:
-	callasm .ThinIce
-	end
-
-.ThinIce:
-;	; changeblock
-;	ld a, [wXCoord]
-;	and %11111110
-;	add 4
-;	ld d, a
-;	ld a, [wYCoord]
-;	and %11111110
-;	add 4
-;	ld e, a
-;	call GetBlockLocation
-;	ld a, $01 ; hard-code block $01
-;	ld [hl], a
-
-;	call GetBGMapPlayerOffset
-
-;	call DisableLCD
-;	; TODO: update tiles
-;	call EnableLCD
-
-	jp UpdateSprites
 
 INCLUDE "engine/overworld/scripting.asm"
 
