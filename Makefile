@@ -211,13 +211,17 @@ gfx/player/chris.2bpp: rgbgfx += -h
 gfx/player/chris_back.2bpp: rgbgfx += -h
 gfx/player/kris.2bpp: rgbgfx += -h
 gfx/player/kris_back.2bpp: rgbgfx += -h
+gfx/player/enby.2bpp: rgbgfx += -h
+gfx/player/enby_back.2bpp: rgbgfx += -h
 
 gfx/trainer_card/chris_card.2bpp: rgbgfx += -h
 gfx/trainer_card/kris_card.2bpp: rgbgfx += -h
+gfx/trainer_card/enby_card.2bpp: rgbgfx += -h
 gfx/trainer_card/leaders.2bpp: tools/gfx += --trim-whitespace
 
 gfx/overworld/chris_fish.2bpp: tools/gfx += --trim-whitespace
 gfx/overworld/kris_fish.2bpp: tools/gfx += --trim-whitespace
+gfx/overworld/enby_fish.2bpp: tools/gfx += --trim-whitespace
 
 gfx/battle/dude.2bpp: rgbgfx += -h
 

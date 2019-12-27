@@ -579,7 +579,7 @@ Function89481:
 Function89492:
 	ld d, 0
 	ld a, [wPlayerGender]
-	bit PLAYERGENDER_FEMALE_F, a
+	and a ; MALE
 	ret z
 	inc d
 	ret
@@ -1195,7 +1195,7 @@ Function897d5:
 Function89807:
 	ld hl, MobileAdapterGFX + $20 tiles
 	ld a, [wPlayerGender]
-	bit PLAYERGENDER_FEMALE_F, a
+	and a ; MALE
 	jr z, .asm_89814
 	ld hl, MobileAdapterGFX + $43 tiles
 .asm_89814

@@ -768,10 +768,13 @@ NamePlayer:
 	ld hl, wPlayerName
 	ld de, .Chris
 	ld a, [wPlayerGender]
-	bit PLAYERGENDER_FEMALE_F, a
-	jr z, .Male
+	and a ; MALE
+	jr z, .GotName
 	ld de, .Kris
-.Male:
+	dec a ; FEMALE
+	jr z, .GotName
+	ld de, .Chrys
+.GotName:
 	call InitName
 	ret
 
@@ -779,6 +782,8 @@ NamePlayer:
 	db "CHRIS@@@@@@"
 .Kris:
 	db "KRIS@@@@@@@"
+.Chrys:
+	db "CHRYS@@@@@@"
 
 Unreferenced_Function60e9:
 	call LoadMenuHeader
@@ -933,10 +938,13 @@ Intro_PlacePlayerSprite:
 
 	ld b, PAL_OW_RED
 	ld a, [wPlayerGender]
-	bit PLAYERGENDER_FEMALE_F, a
-	jr z, .male
+	and a ; MALE
+	jr z, .okay
 	ld b, PAL_OW_BLUE
-.male
+	dec a ; FEMALE
+	jr z, .okay
+	ld b, PAL_OW_GREEN
+.okay
 	ld a, b
 
 	ld [hli], a

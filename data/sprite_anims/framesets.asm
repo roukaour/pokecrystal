@@ -66,6 +66,8 @@ SpriteAnimFrameData:
 	dw .Frameset_IntroUnownF
 	dw .Frameset_CelebiLeft
 	dw .Frameset_CelebiRight
+	dw .Frameset_GreenWalk
+	dw .Frameset_MagnetTrainGreen
 
 .Frameset_00:
 	frame SPRITE_ANIM_OAMSET_RED_WALK_1, 32
@@ -495,3 +497,17 @@ SpriteAnimFrameData:
 	frame SPRITE_ANIM_OAMSET_CELEBI_1,  8, OAM_X_FLIP
 	frame SPRITE_ANIM_OAMSET_CELEBI_2,  8, OAM_X_FLIP
 	endanim
+
+.Frameset_GreenWalk:
+	frame SPRITE_ANIM_OAMSET_GREEN_WALK_1,  8
+	frame SPRITE_ANIM_OAMSET_GREEN_WALK_2,  8
+	frame SPRITE_ANIM_OAMSET_GREEN_WALK_1,  8
+	frame SPRITE_ANIM_OAMSET_GREEN_WALK_2,  8, OAM_X_FLIP
+	dorestart
+
+.Frameset_MagnetTrainGreen:
+	frame SPRITE_ANIM_OAMSET_MAGNET_TRAIN_GREEN_1,  8
+	frame SPRITE_ANIM_OAMSET_MAGNET_TRAIN_GREEN_2,  8
+	frame SPRITE_ANIM_OAMSET_MAGNET_TRAIN_GREEN_1,  8
+	frame SPRITE_ANIM_OAMSET_MAGNET_TRAIN_GREEN_2,  8, OAM_X_FLIP
+	dorestart

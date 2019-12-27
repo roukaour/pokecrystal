@@ -27,10 +27,10 @@ CHRIS EQU __enum__
 KRIS EQU __enum__
 	trainerclass FALKNER ; 1
 	const FALKNER1
-
 	trainerclass WHITNEY ; 2
 	const WHITNEY1
 
+CHRYS EQU __enum__
 	trainerclass BUGSY ; 3
 	const BUGSY1
 
