@@ -505,15 +505,17 @@ InitRoamMons:
 	ld [wRoamMon2Level], a
 
 ; raikou starting map
-	ld a, GROUP_ROUTE_42
+; TODO: Replace GROUP_NONE and MAP_NONE with the starting map for Raikou to roam.
+	ld a, GROUP_NONE
 	ld [wRoamMon1MapGroup], a
-	ld a, MAP_ROUTE_42
+	ld a, MAP_NONE
 	ld [wRoamMon1MapNumber], a
 
 ; entei starting map
-	ld a, GROUP_ROUTE_37
+; TODO: Replace GROUP_NONE and MAP_NONE with the starting map for Entei to roam.
+	ld a, GROUP_NONE
 	ld [wRoamMon2MapGroup], a
-	ld a, MAP_ROUTE_37
+	ld a, MAP_NONE
 	ld [wRoamMon2MapNumber], a
 
 ; hp

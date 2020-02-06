@@ -390,7 +390,7 @@ Continue:
 	jp FinishContinueFunction
 
 SpawnAfterRed:
-	ld a, SPAWN_MT_SILVER
+	ld a, SPAWN_NEW_BARK
 	ld [wDefaultSpawnpoint], a
 
 PostCreditsSpawn:

@@ -1,9 +1,5 @@
 	object_const_def
 	const BATTLETOWER1F_RECEPTIONIST
-	const BATTLETOWER1F_YOUNGSTER
-	const BATTLETOWER1F_COOLTRAINER_F
-	const BATTLETOWER1F_BUG_CATCHER
-	const BATTLETOWER1F_GRANNY
 
 BattleTower1F_MapScripts:
 	def_scene_scripts
@@ -243,24 +239,6 @@ BattleTower_LeftWithoutSaving:
 	writetext Text_BattleTower_LeftWithoutSaving
 	waitbutton
 	sjump Script_BattleTowerHopeToServeYouAgain
-
-BattleTower1FYoungsterScript:
-	faceplayer
-	opentext
-	writetext Text_BattleTowerYoungster
-	waitbutton
-	closetext
-	turnobject BATTLETOWER1F_YOUNGSTER, RIGHT
-	end
-
-BattleTower1FCooltrainerFScript:
-	jumptextfaceplayer Text_BattleTowerCooltrainerF
-
-BattleTower1FBugCatcherScript:
-	jumptextfaceplayer Text_BattleTowerBugCatcher
-
-BattleTower1FGrannyScript:
-	jumptextfaceplayer Text_BattleTowerGranny
 
 MovementData_BattleTower1FWalkToElevator:
 	step UP
@@ -750,47 +728,6 @@ Text_MayNotEnterABattleRoomUnderL70:
 	text "."
 	done
 
-Text_BattleTowerYoungster:
-	text "Destroyed by the"
-	line "first opponent in"
-
-	para "no time at all…"
-	line "I'm no good…"
-	done
-
-Text_BattleTowerCooltrainerF:
-	text "There are lots of"
-	line "BATTLE ROOMS, but"
-
-	para "I'm going to win"
-	line "them all!"
-	done
-
-Text_BattleTowerGranny:
-	text "It's a grueling"
-	line "task, not being"
-
-	para "able to use items"
-	line "in battle."
-
-	para "Making your"
-	line "#MON hold items"
-
-	para "is the key to"
-	line "winning battles."
-	done
-
-Text_BattleTowerBugCatcher:
-	text "I'm trying to see"
-	line "how far I can go"
-
-	para "using just bug"
-	line "#MON."
-
-	para "Don't let there be"
-	line "any fire #MON…"
-	done
-
 BattleTower1F_MapEvents:
 	db 0, 0 ; filler
 
@@ -806,7 +743,3 @@ BattleTower1F_MapEvents:
 
 	def_object_events
 	object_event  7,  6, SPRITE_RECEPTIONIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, BattleTower1FReceptionistScript, -1
-	object_event 14,  9, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, BattleTower1FYoungsterScript, -1
-	object_event  4,  9, SPRITE_COOLTRAINER_F, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 1, 0, -1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, BattleTower1FCooltrainerFScript, -1
-	object_event  1,  3, SPRITE_BUG_CATCHER, SPRITEMOVEDATA_WANDER, 1, 1, -1, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, BattleTower1FBugCatcherScript, -1
-	object_event 14,  3, SPRITE_GRANNY, SPRITEMOVEDATA_WALK_UP_DOWN, 0, 1, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, BattleTower1FGrannyScript, -1

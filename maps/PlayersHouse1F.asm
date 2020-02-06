@@ -40,6 +40,7 @@ MeetMomScript:
 	scall PlayersHouse1FReceiveItemStd
 	setflag ENGINE_POKEGEAR
 	setflag ENGINE_PHONE_CARD
+	setflag ENGINE_MAP_CARD
 	addcellnum PHONE_MOM
 	setscene SCENE_FINISHED
 	setevent EVENT_PLAYERS_HOUSE_MOM_1
@@ -79,6 +80,15 @@ MeetMomScript:
 .FinishPhone:
 	writetext InstructionsNextText
 	waitbutton
+	writetext GetStarterText
+	promptbutton
+	waitsfx
+	getmonname STRING_BUFFER_3, PIKACHU
+	writetext ReceivedStarterText
+	playsound SFX_CAUGHT_MON
+	waitsfx
+	promptbutton
+	givepoke PIKACHU, 5, BERRY
 	closetext
 	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
 	iftrue .FromRight
@@ -238,6 +248,10 @@ MomGivesPokegearText:
 	line "you want to be a"
 	cont "good trainer."
 
+	para "It comes with a"
+	line "CLOCK, PHONE,"
+	cont "and TOWN MAP!"
+
 	para "Oh, the day of the"
 	line "week isn't set."
 
@@ -288,6 +302,19 @@ InstructionsNextText:
 
 	para "Gee, isn't that"
 	line "convenient?"
+	done
+
+GetStarterText:
+	text "One more thing!"
+	line "Here's your first"
+	cont "#MON!"
+	done
+
+ReceivedStarterText:
+	text "<PLAYER> received"
+	line "@"
+	text_ram wStringBuffer3
+	text "!"
 	done
 
 HurryUpElmIsWaitingText:
@@ -387,8 +414,8 @@ PlayersHouse1F_MapEvents:
 	db 0, 0 ; filler
 
 	def_warp_events
-	warp_event  6,  7, NEW_BARK_TOWN, 2
-	warp_event  7,  7, NEW_BARK_TOWN, 2
+	warp_event  6,  7, NEW_BARK_TOWN, 1
+	warp_event  7,  7, NEW_BARK_TOWN, 1
 	warp_event  9,  0, PLAYERS_HOUSE_2F, 1
 
 	def_coord_events
