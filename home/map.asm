@@ -368,14 +368,6 @@ CheckIndoorMap::
 	cp GATE
 	ret
 
-CheckUnknownMap:: ; unreferenced
-	cp INDOOR
-	ret z
-	cp GATE
-	ret z
-	cp ENVIRONMENT_5
-	ret
-
 LoadMapAttributes::
 	call CopyMapPartialAndAttributes
 	call SwitchToMapScriptsBank
@@ -446,32 +438,50 @@ GetMapConnections::
 	ld [wWestConnectedMapGroup], a
 	ld [wEastConnectedMapGroup], a
 
+	xor a
+	ld [wNorthEastCornerLocation], a
+	ld [wNorthEastCornerLocation+1], a
+	ld [wNorthWestCornerLocation], a
+	ld [wNorthWestCornerLocation+1], a
+	ld [wSouthEastCornerLocation], a
+	ld [wSouthEastCornerLocation+1], a
+	ld [wSouthWestCornerLocation], a
+	ld [wSouthWestCornerLocation+1], a
+
 	ld a, [wMapConnections]
 	ld b, a
 
 	bit NORTH_F, b
-	jr z, .no_north
 	ld de, wNorthMapConnection
-	call GetMapConnection
-.no_north
+	call nz, GetMapConnection
 
 	bit SOUTH_F, b
-	jr z, .no_south
 	ld de, wSouthMapConnection
-	call GetMapConnection
-.no_south
+	call nz, GetMapConnection
 
 	bit WEST_F, b
-	jr z, .no_west
 	ld de, wWestMapConnection
-	call GetMapConnection
-.no_west
+	call nz, GetMapConnection
 
 	bit EAST_F, b
-	jr z, .no_east
 	ld de, wEastMapConnection
-	call GetMapConnection
-.no_east
+	call nz, GetMapConnection
+
+	bit NORTHEAST_F, b
+	ld de, wNorthEastMapConnection
+	call nz, GetMapCornerConnection
+
+	bit NORTHWEST_F, b
+	ld de, wNorthWestMapConnection
+	call nz, GetMapCornerConnection
+
+	bit SOUTHEAST_F, b
+	ld de, wSouthEastMapConnection
+	call nz, GetMapCornerConnection
+
+	bit SOUTHWEST_F, b
+	ld de, wSouthWestMapConnection
+	call nz, GetMapCornerConnection
 
 	ret
 
@@ -485,6 +495,11 @@ GetMapConnection::
 	dec c
 	jr nz, .loop
 	ret
+
+GetMapCornerConnection::
+; Load map corner connection struct at hl into de.
+	ld c, wNorthWestMapConnection - wNorthEastMapConnection
+	jr GetMapConnection.loop
 
 ReadMapSceneScripts::
 	ld a, [hli] ; scene_script count
@@ -828,7 +843,7 @@ FillMapConnections::
 .East:
 	ld a, [wEastConnectedMapGroup]
 	cp $ff
-	jr z, .Done
+	jr z, .Corners
 	ld b, a
 	ld a, [wEastConnectedMapNumber]
 	ld c, a
@@ -848,7 +863,57 @@ FillMapConnections::
 	ldh [hConnectionStripLength], a
 	call FillEastConnectionStrip
 
-.Done:
+.Corners:
+	ld hl, wNorthEastCornerLocation + 1
+	ld a, [hld]
+	or [hl]
+	call nz, FillConnectionCorner
+
+	ld hl, wNorthWestCornerLocation + 1
+	ld a, [hld]
+	or [hl]
+	call nz, FillConnectionCorner
+
+	ld hl, wSouthEastCornerLocation + 1
+	ld a, [hld]
+	or [hl]
+	call nz, FillConnectionCorner
+
+	ld hl, wSouthWestCornerLocation + 1
+	ld a, [hld]
+	or [hl]
+	ret z
+	; fallthrough
+
+FillConnectionCorner:
+	ld a, [hli]
+	ld e, a
+	ld a, [hli]
+	ld d, a
+	call .FillRow
+	call .NextRow
+	call .FillRow
+	call .NextRow
+	; fallthrough
+
+.FillRow:
+	; copy 3 blocks from hl to de
+rept 3
+	ld a, [hli]
+	ld [de], a
+	inc de
+endr
+	ret
+
+.NextRow:
+	; de += [wMapWidth] + 3
+	ld a, [wMapWidth]
+	add 3
+	add e
+	ld e, a
+	adc d
+	sub e
+	ld d, a
 	ret
 
 FillNorthConnectionStrip::
@@ -1109,20 +1174,6 @@ ObjectEventText::
 	text_far _ObjectEventText
 	text_end
 
-BGEvent:: ; unreferenced
-	jumptext BGEventText
-
-BGEventText::
-	text_far _BGEventText
-	text_end
-
-CoordinatesEvent:: ; unreferenced
-	jumptext CoordinatesEventText
-
-CoordinatesEventText::
-	text_far _CoordinatesEventText
-	text_end
-
 CheckObjectMask::
 	ldh a, [hMapObjectIndexBuffer]
 	ld e, a
@@ -1310,13 +1361,6 @@ UpdateBGMapColumn::
 	jr nz, .loop
 	ld a, SCREEN_HEIGHT
 	ldh [hBGMapTileCount], a
-	ret
-
-ClearBGMapBuffer:: ; unreferenced
-	ld hl, wBGMapBuffer
-	ld bc, wBGMapBufferEnd - wBGMapBuffer
-	xor a
-	call ByteFill
 	ret
 
 LoadTilesetGFX::
@@ -2047,11 +2091,6 @@ SwitchToAnyMapAttributesBank::
 	rst Bankswitch
 	ret
 
-GetMapAttributesBank:: ; unreferenced
-	ld a, [wMapGroup]
-	ld b, a
-	ld a, [wMapNumber]
-	ld c, a
 GetAnyMapAttributesBank::
 	push hl
 	push de
