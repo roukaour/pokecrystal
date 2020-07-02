@@ -526,6 +526,15 @@ RadioTower5F_Blocks:
 NewBarkTown_Blocks:
 	INCBIN "maps/NewBarkTown.blk"
 
+NewBarkTown_NorthEastCorner_Blocks:
+	db $6a, $70, $6b, $68, $71, $69, $6c, $72, $6d ; cliffs
+NewBarkTown_NorthWestCorner_Blocks:
+	db $30, $31, $32, $34, $35, $36, $38, $39, $3a ; water
+NewBarkTown_SouthEastCorner_Blocks:
+	db $40, $41, $42, $44, $01, $46, $48, $49, $4a ; fences
+NewBarkTown_SouthWestCorner_Blocks:
+	db $5c, $5d, $5e, $60, $61, $62, $64, $65, $66 ; trees
+
 CherrygroveCity_Blocks:
 	INCBIN "maps/CherrygroveCity.blk"
 

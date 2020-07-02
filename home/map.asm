@@ -890,6 +890,11 @@ FillConnectionCorner:
 	ld e, a
 	ld a, [hli]
 	ld d, a
+	ld a, [hli]
+	rst Bankswitch
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
 	call .FillRow
 	call .NextRow
 	call .FillRow
@@ -2319,7 +2324,7 @@ InexplicablyEmptyFunction::
 ; unused
 ; Inexplicably empty.
 ; Seen in PredefPointers.
-rept 16
+rept 11
 	nop
 endr
 	ret
