@@ -256,7 +256,7 @@ Route31_Blocks:
 Route27_Blocks:
 	INCBIN "maps/Route27.blk"
 
-Route35_Blocks:
+Route35_Blocks::
 	INCBIN "maps/Route35.blk"
 
 Route43_Blocks:
@@ -475,7 +475,7 @@ KurtsHouse_Blocks:
 GoldenrodMagnetTrainStation_Blocks:
 	INCBIN "maps/GoldenrodMagnetTrainStation.blk"
 
-RuinsOfAlphOutside_Blocks:
+RuinsOfAlphOutside_Blocks::
 	INCBIN "maps/RuinsOfAlphOutside.blk"
 
 BetaRuinsOfAlphUnsolvedPuzzleRoom_Blocks:
@@ -1045,3 +1045,6 @@ BetaBlank_Blocks:
 
 GoldenrodDeptStoreRoof_Blocks:
 	INCBIN "maps/GoldenrodDeptStoreRoof.blk"
+
+Route36SouthConnectionDummy_Blocks:
+	INCBIN "maps/Route36SouthConnectionDummy.blk"

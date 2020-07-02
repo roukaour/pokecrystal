@@ -241,6 +241,7 @@ ENDM
 	map_const ROUTE_35_NATIONAL_PARK_GATE,                  4,  4 ; 15
 	map_const ROUTE_36_RUINS_OF_ALPH_GATE,                  5,  4 ; 16
 	map_const ROUTE_36_NATIONAL_PARK_GATE,                  5,  4 ; 17
+	map_const ROUTE_36_SOUTH_CONNECTION_DUMMY,             30,  3 ; 18
 
 	newgroup                                                      ; 11
 

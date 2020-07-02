@@ -16,86 +16,6 @@ CURRENT_MAP_HEIGHT = \2_HEIGHT
 	db \4
 ENDM
 
-; Connections go in order: north, south, west, east
-connection: MACRO
-;\1: direction
-;\2: map name
-;\3: map id
-;\4: offset of the target map relative to the current map
-;    (x offset for east/west, y offset for north/south)
-
-; LEGACY: Support for old connection macro
-if _NARG == 6
-	connection \1, \2, \3, (\4) - (\5)
-else
-
-; Calculate tile offsets for source (current) and target maps
-_src = 0
-_tgt = (\4) + 3
-if _tgt < 0
-_src = -_tgt
-_tgt = 0
-endc
-
-if !STRCMP("\1", "north")
-_blk = \3_WIDTH * (\3_HEIGHT - 3) + _src
-_map = _tgt
-_win = (\3_WIDTH + 6) * \3_HEIGHT + 1
-_y = \3_HEIGHT * 2 - 1
-_x = (\4) * -2
-_len = CURRENT_MAP_WIDTH + 3 - (\4)
-if _len > \3_WIDTH
-_len = \3_WIDTH
-endc
-
-elif !STRCMP("\1", "south")
-_blk = _src
-_map = (CURRENT_MAP_WIDTH + 6) * (CURRENT_MAP_HEIGHT + 3) + _tgt
-_win = \3_WIDTH + 7
-_y = 0
-_x = (\4) * -2
-_len = CURRENT_MAP_WIDTH + 3 - (\4)
-if _len > \3_WIDTH
-_len = \3_WIDTH
-endc
-
-elif !STRCMP("\1", "west")
-_blk = (\3_WIDTH * _src) + \3_WIDTH - 3
-_map = (CURRENT_MAP_WIDTH + 6) * _tgt
-_win = (\3_WIDTH + 6) * 2 - 6
-_y = (\4) * -2
-_x = \3_WIDTH * 2 - 1
-_len = CURRENT_MAP_HEIGHT + 3 - (\4)
-if _len > \3_HEIGHT
-_len = \3_HEIGHT
-endc
-
-elif !STRCMP("\1", "east")
-_blk = (\3_WIDTH * _src)
-_map = (CURRENT_MAP_WIDTH + 6) * _tgt + CURRENT_MAP_WIDTH + 3
-_win = \3_WIDTH + 7
-_y = (\4) * -2
-_x = 0
-_len = CURRENT_MAP_HEIGHT + 3 - (\4)
-if _len > \3_HEIGHT
-_len = \3_HEIGHT
-endc
-
-else
-fail "Invalid direction for 'connection'."
-endc
-
-	map_id \3
-	dw \2_Blocks + _blk
-	dw wOverworldMapBlocks + _map
-	db _len - _src
-	db \3_WIDTH
-	db _y, _x
-	dw wOverworldMapBlocks + _win
-endc
-ENDM
-
-
 	map_attributes NewBarkTown, NEW_BARK_TOWN, $05, WEST | EAST
 	connection west, Route29, ROUTE_29, 0
 	connection east, Route27, ROUTE_27, 0
@@ -185,8 +105,14 @@ ENDM
 
 	map_attributes Route36, ROUTE_36, $05, NORTH | SOUTH | EAST
 	connection north, Route37, ROUTE_37, 10
-	connection south, Route35, ROUTE_35, 0
+	connection south, Route36SouthConnectionDummy, ROUTE_36_SOUTH_CONNECTION_DUMMY, 0
 	connection east, VioletCity, VIOLET_CITY, 0
+
+	map_attributes Route36SouthConnectionDummy, ROUTE_36_SOUTH_CONNECTION_DUMMY, $05, NORTH
+	connection north, Route36, ROUTE_36, 0
+
+	map_attributes RuinsOfAlphOutside, RUINS_OF_ALPH_OUTSIDE, $05, NORTH
+	connection north, Route36, ROUTE_36, -20
 
 	map_attributes Route37, ROUTE_37, $05, NORTH | SOUTH
 	connection north, EcruteakCity, ECRUTEAK_CITY, -5
@@ -396,7 +322,6 @@ ENDM
 	map_attributes RadioTower3F, RADIO_TOWER_3F, $00, 0
 	map_attributes RadioTower4F, RADIO_TOWER_4F, $00, 0
 	map_attributes RadioTower5F, RADIO_TOWER_5F, $00, 0
-	map_attributes RuinsOfAlphOutside, RUINS_OF_ALPH_OUTSIDE, $05, 0
 	map_attributes RuinsOfAlphHoOhChamber, RUINS_OF_ALPH_HO_OH_CHAMBER, $00, 0
 	map_attributes RuinsOfAlphKabutoChamber, RUINS_OF_ALPH_KABUTO_CHAMBER, $00, 0
 	map_attributes RuinsOfAlphOmanyteChamber, RUINS_OF_ALPH_OMANYTE_CHAMBER, $00, 0
