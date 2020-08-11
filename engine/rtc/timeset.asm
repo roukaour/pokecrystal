@@ -351,8 +351,10 @@ OakText_ResponseToSetTime:
 	jr c, .nite
 	cp DAY_HOUR + 1
 	jr c, .morn
-	cp NITE_HOUR
+	cp EVE_HOUR
 	jr c, .day
+	cp NITE_HOUR
+	jr c, .eve
 .nite
 	ld hl, .OakTimeSoDarkText
 	ret
@@ -362,6 +364,9 @@ OakText_ResponseToSetTime:
 .day
 	ld hl, .OakTimeYikesText
 	ret
+.eve
+	ld hl, .OakTimeNappedText
+	ret
 
 .OakTimeOversleptText:
 	text_far _OakTimeOversleptText
@@ -369,6 +374,10 @@ OakText_ResponseToSetTime:
 
 .OakTimeYikesText:
 	text_far _OakTimeYikesText
+	text_end
+
+.OakTimeNappedText:
+	text_far _OakTimeNappedText
 	text_end
 
 .OakTimeSoDarkText:
@@ -693,8 +702,10 @@ GetTimeOfDayString:
 	jr c, .nite
 	cp DAY_HOUR
 	jr c, .morn
-	cp NITE_HOUR
+	cp EVE_HOUR
 	jr c, .day
+	cp NITE_HOUR
+	jr c, .eve
 .nite
 	ld de, .nite_string
 	ret
@@ -704,10 +715,14 @@ GetTimeOfDayString:
 .day
 	ld de, .day_string
 	ret
+.eve
+	ld de, .eve_string
+	ret
 
 .nite_string: db "NITE@"
 .morn_string: db "MORN@"
 .day_string:  db "DAY@"
+.eve_string:  db "EVE@"
 
 AdjustHourForAMorPM:
 ; Convert the hour stored in c (0-23) to a 1-12 value

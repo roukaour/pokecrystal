@@ -1265,6 +1265,8 @@ LoadMapPals:
 	ld a, BANK(wOBPals1)
 	call FarCopyWRAM
 
+	farcall LoadSpecialNPCPalette
+
 	ld a, [wEnvironment]
 	cp TOWN
 	jr z, .outside
@@ -1272,20 +1274,24 @@ LoadMapPals:
 	ret nz
 .outside
 	ld a, [wMapGroup]
-	ld l, a
-	ld h, 0
-	add hl, hl
-	add hl, hl
-	add hl, hl
-	ld de, RoofPals
+	add a
+	add a
+	ld hl, RoofPals
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
 	add hl, de
 	ld a, [wTimeOfDayPal]
 	maskbits NUM_DAYTIMES
 	cp NITE_F
+	ld de, 4
+	jr z, .nite
 	jr c, .morn_day
-rept 4
-	inc hl
-endr
+; eve
+	add hl, de
+.nite
+	add hl, de
 .morn_day
 	ld de, wBGPals1 palette PAL_BG_ROOF color 1
 	ld bc, 4

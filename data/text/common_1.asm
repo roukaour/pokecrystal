@@ -199,6 +199,12 @@ _OakTimeYikesText::
 	cont "slept!"
 	done
 
+_OakTimeNappedText::
+	text "!"
+	line "I napped for"
+	cont "too long!"
+	done
+
 _OakTimeSoDarkText::
 	text "!"
 	line "No wonder it's so"
